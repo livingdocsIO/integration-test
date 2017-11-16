@@ -8,11 +8,13 @@ We want to assure that our changes in the upstream has no negative effect for ou
 Create a new codeship build and add this lines to the 'setup' step in a build pipeline.
 
 ```bash
+# Environment variable
+export GH_ACCESS_TOKEN=...
+# Script
 export CURRENT_UPSTREAM_BRANCH=$CI_BRANCH
 export CURRENT_UPSTREAM_REPO_NAME=$CI_REPO_NAME
-export REPO_SOURCE_PATH=/home/rof/src/github.com/upfrontIO/livingdocs-editor
-export GH_ACCESS_TOKEN=...
-cd $REPO_SOURCE_PATH
+export CURRENT_UPSTREAM_PATH=/home/rof/src/github.com/upfrontIO/livingdocs-editor
+export CURRENT_DOWNSTREAM_PATH=/home/rof/src/github.com/downstream/livingdocs-editor
 npm install git+https://git@github.com/upfrontIO/integration-test.git
 . ./node_modules/integration-test/setup-downstream-integration.sh
 ```
@@ -22,6 +24,8 @@ As a next step add this lines to the 'configuration' step of the build pipeline.
 ```bash
 export CURRENT_UPSTREAM_PROJECT=bluewin
 li_clone_branch
+li_log_scenario
+# li_setup_editor and li_setup_server are available
 li_setup_editor
 npm install
 npm test

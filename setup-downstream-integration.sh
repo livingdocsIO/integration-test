@@ -6,11 +6,10 @@
 # CURRENT_UPSTREAM_REPO_NAME = Repository Name e.g. upfrontIO/livingdocs-editor
 # CURRENT_UPSTREAM_PROJECT = Project name for the integration lookup in livingdocs-integration.json e.g. bluewin
 # GH_ACCESS_TOKEN = Token for accessing the github API from the upstream project e.g. upfrontIO/livingdocs-editor
-# REPO_SOURCE_PATH = File path to the repository in the build environment
+# CURRENT_UPSTREAM_PATH = File path to the upstream repository in the build environment
+# CURRENT_DOWNSTREAM_PATH = File path to the downstream repository in the build environment
 function setup_commands () {
   # ------------------------------
-  DESTINATION="${DESTINATION:-$PWD}"
-
   function li_clone_branch () {
     if [ -z $CURRENT_UPSTREAM_BRANCH ]; then
         >&2 echo 'The environment variable "$CURRENT_UPSTREAM_BRANCH" is required e.g. CURRENT_UPSTREAM_BRANCH=my-feature'
@@ -32,12 +31,12 @@ function setup_commands () {
         return 1
     fi
 
-    if [ -z $REPO_SOURCE_PATH ]; then
-        >&2 echo 'The environment variable "$REPO_SOURCE_PATH" is required e.g. REPO_SOURCE_PATH=/home/rof/src/github.com/upfrontIO/livingdocs-editor'
+    if [ -z $CURRENT_UPSTREAM_PATH ]; then
+        >&2 echo 'The environment variable "$CURRENT_UPSTREAM_PATH" is required e.g. CURRENT_UPSTREAM_PATH=/home/rof/src/github.com/upfrontIO/livingdocs-editor'
         return 1
     fi
 
-    INTEGRATION_CONFIG=$REPO_SOURCE_PATH/livingdocs-integration.json
+    INTEGRATION_CONFIG=$CURRENT_UPSTREAM_PATH/livingdocs-integration.json
 
     if [ ! -f $INTEGRATION_CONFIG ]; then
       >&2 echo "The file '$INTEGRATION_CONFIG' does not exist and is needed to run the integration tests."
@@ -86,49 +85,47 @@ function setup_commands () {
     # clone the right branch
     DOWNSTREAM_REPO_NAME=${CUSTOM_REPO_NAME:-$DEFAULT_REPO_NAME}
     DOWNSTREAM_REPO_URL="git@github.com:$DOWNSTREAM_REPO_NAME.git"
-    DOWNSTREAM_REPO_DESTINATION=$DESTINATION/$DEFAULT_REPO_NAME
-    mkdir -p $DOWNSTREAM_REPO_DESTINATION
+    mkdir -p $CURRENT_DOWNSTREAM_PATH
 
     if [ $CURRENT_UPSTREAM_BRANCH == "master" ]; then
       >&2 echo "The CURRENT_UPSTREAM_BRANCH is 'master'";
-      git clone --branch $DEFAULT_INTEGRATION_BRANCH --depth 50 $DOWNSTREAM_REPO_URL $DOWNSTREAM_REPO_DESTINATION || \
-      git clone --branch master --depth 50 $DOWNSTREAM_REPO_URL $DOWNSTREAM_REPO_DESTINATION || \
+      git clone --branch $DEFAULT_INTEGRATION_BRANCH --depth 50 $DOWNSTREAM_REPO_URL $CURRENT_DOWNSTREAM_PATH || \
+      git clone --branch master --depth 50 $DOWNSTREAM_REPO_URL $CURRENT_DOWNSTREAM_PATH || \
       return 1
     else
       >&2 echo "The CURRENT_UPSTREAM_BRANCH is not 'master'" && \
-      git clone --branch $CURRENT_UPSTREAM_BRANCH --depth 50 $DOWNSTREAM_REPO_URL $DOWNSTREAM_REPO_DESTINATION || \
-      git clone --branch $CUSTOM_INTEGRATION_BRANCH_NAME --depth 50 $DOWNSTREAM_REPO_URL $DOWNSTREAM_REPO_DESTINATION || \
-      git clone --branch $DEFAULT_INTEGRATION_BRANCH --depth 50 $DOWNSTREAM_REPO_URL $DOWNSTREAM_REPO_DESTINATION || \
-      git clone --branch master --depth 50 $DOWNSTREAM_REPO_URL $DOWNSTREAM_REPO_DESTINATION || \
+      git clone --branch $CURRENT_UPSTREAM_BRANCH --depth 50 $DOWNSTREAM_REPO_URL $CURRENT_DOWNSTREAM_PATH || \
+      git clone --branch $CUSTOM_INTEGRATION_BRANCH_NAME --depth 50 $DOWNSTREAM_REPO_URL $CURRENT_DOWNSTREAM_PATH || \
+      git clone --branch $DEFAULT_INTEGRATION_BRANCH --depth 50 $DOWNSTREAM_REPO_URL $CURRENT_DOWNSTREAM_PATH || \
+      git clone --branch master --depth 50 $DOWNSTREAM_REPO_URL $CURRENT_DOWNSTREAM_PATH || \
       return 1
     fi
+  }
 
-    cd $DOWNSTREAM_REPO_DESTINATION
+  function li_log_scenario () {
+    cd $CURRENT_DOWNSTREAM_PATH
 
-    # Log the test scenario
     >&2 echo ""
     >&2 echo "---------- TEST SCENARIO --------------"
     DOWNSTREAM_BRANCH=`echo $(git rev-parse --abbrev-ref HEAD | grep -v ^HEAD$ || git rev-parse HEAD)`
-    >&2 echo "Current Directory: $DOWNSTREAM_REPO_DESTINATION"
     >&2 echo "Test downstream '$DOWNSTREAM_REPO_NAME/$DOWNSTREAM_BRANCH' against upstream '$CURRENT_UPSTREAM_BRANCH'"
     >&2 echo "---------- TEST SCENARIO --------------"
     >&2 echo ""
   }
 
   function li_setup_server () {
+    cd $CURRENT_DOWNSTREAM_PATH
     . ~/.nvm/nvm.sh
     nvm install
-    cp -R ../../$CURRENT_UPSTREAM_REPO_NAME ./_livingdocs-server
+    cp -R $CURRENT_UPSTREAM_PATH ./_livingdocs-server
     sed -i 's/"@livingdocs\/server": ".*"/"\@livingdocs\/server": "file:.\/_livingdocs-server"/' package.json
   }
 
   function li_setup_editor () {
+    cd $CURRENT_DOWNSTREAM_PATH
     . ~/.nvm/nvm.sh
     nvm install
-    echo $CURRENT_UPSTREAM_REPO_NAME
-    ls ../../$CURRENT_UPSTREAM_REPO_NAME
-    pwd
-    cp -R ../../$CURRENT_UPSTREAM_REPO_NAME ./_livingdocs-editor
+    cp -R $CURRENT_UPSTREAM_PATH ./_livingdocs-editor
     sed -i 's/"@livingdocs\/editor": ".*"/"\@livingdocs\/editor": "file:.\/_livingdocs-editor"/' package.json
   }
 }
