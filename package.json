@@ -1,0 +1,19 @@
+{
+  "name": "integration-test",
+  "version": "1.0.0",
+  "description": "Integration test setup",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/upfrontIO/integration-test.git"
+  },
+  "author": "livingdocs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/upfrontIO/integration-test/issues"
+  },
+  "homepage": "https://github.com/upfrontIO/integration-test#readme"
+}
