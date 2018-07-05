@@ -87,9 +87,9 @@ function setup_commands () {
     DOWNSTREAM_REPO_URL="git@github.com:$DOWNSTREAM_REPO_NAME.git"
     mkdir -p $CURRENT_DOWNSTREAM_PATH
 
-    if [ $CURRENT_UPSTREAM_BRANCH == "master" ] || [ $CURRENT_UPSTREAM_BRANCH =~ ^greenkeeper/ ]; then
+    if [ $CURRENT_UPSTREAM_BRANCH == "master" ] || [ $(echo $CURRENT_UPSTREAM_BRANCH | grep ^greenkeeper/) ]; then
       >&2 echo "The CURRENT_UPSTREAM_BRANCH is '$CURRENT_UPSTREAM_BRANCH'";
-      if [ $CURRENT_UPSTREAM_BRANCH =~ ^greenkeeper/ ]; then >&2 echo "Use the default downstream integration branch because of Greenkeeper"; fi
+      if [ $(echo $CURRENT_UPSTREAM_BRANCH | grep ^greenkeeper/) ]; then >&2 echo "Use the default downstream integration branch because of Greenkeeper"; fi
       git clone --branch $DEFAULT_INTEGRATION_BRANCH --depth 50 $DOWNSTREAM_REPO_URL $CURRENT_DOWNSTREAM_PATH || \
       git clone --branch master --depth 50 $DOWNSTREAM_REPO_URL $CURRENT_DOWNSTREAM_PATH || \
       return 1
