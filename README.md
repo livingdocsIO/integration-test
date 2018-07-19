@@ -13,9 +13,9 @@ export GH_ACCESS_TOKEN=...
 # Script
 export CURRENT_UPSTREAM_BRANCH=$CI_BRANCH
 export CURRENT_UPSTREAM_REPO_NAME=$CI_REPO_NAME
-export CURRENT_UPSTREAM_PATH=/home/rof/src/github.com/upfrontIO/livingdocs-editor
+export CURRENT_UPSTREAM_PATH=/home/rof/src/github.com/livingdocsIO/livingdocs-editor
 export CURRENT_DOWNSTREAM_PATH=/home/rof/src/github.com/downstream/livingdocs-editor
-npm install git+https://git@github.com/upfrontIO/integration-test.git
+npm install git+https://git@github.com/livingdocsIO/integration-test.git
 . ./node_modules/integration-test/setup-downstream-integration.sh
 ```
 
@@ -38,7 +38,7 @@ As last step you have to add a file to your upstream repository with the name `l
   "bluewin": {
     "default": {
       "downstream": {
-        "repository": "upfrontIO/livingdocs-bluewin-editor",
+        "repository": "livingdocsIO/livingdocs-bluewin-editor",
         "integration-branch": "upstream-release-2017-11"
       }
     },
@@ -46,7 +46,7 @@ As last step you have to add a file to your upstream repository with the name `l
       {
         "base-branch": "release-2017-10",
         "downstream": {
-          "repository": "upfrontIO/livingdocs-bluewin-editor",
+          "repository": "livingdocsIO/livingdocs-bluewin-editor",
           "integration-branch": "upstream-release-2017-10"
         }
       }

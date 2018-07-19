@@ -3,9 +3,9 @@
 # MANDATORY ENVIRONMENT VARIABLES
 # -------------------------------
 # CURRENT_UPSTREAM_BRANCH = The branch where the upstream commit happened e.g. my-upstream-branch
-# CURRENT_UPSTREAM_REPO_NAME = Repository Name e.g. upfrontIO/livingdocs-editor
+# CURRENT_UPSTREAM_REPO_NAME = Repository Name e.g. livingdocsIO/livingdocs-editor
 # CURRENT_UPSTREAM_PROJECT = Project name for the integration lookup in livingdocs-integration.json e.g. bluewin
-# GH_ACCESS_TOKEN = Token for accessing the github API from the upstream project e.g. upfrontIO/livingdocs-editor
+# GH_ACCESS_TOKEN = Token for accessing the github API from the upstream project e.g. livingdocsIO/livingdocs-editor
 # CURRENT_UPSTREAM_PATH = File path to the upstream repository in the build environment
 # CURRENT_DOWNSTREAM_PATH = File path to the downstream repository in the build environment
 function setup_commands () {
@@ -17,7 +17,7 @@ function setup_commands () {
     fi
 
     if [ -z $CURRENT_UPSTREAM_REPO_NAME ]; then
-        >&2 echo 'The environment variable "$CURRENT_UPSTREAM_REPO_NAME" is required e.g. CURRENT_UPSTREAM_REPO_NAME=upfrontIO/livingdocs-editor'
+        >&2 echo 'The environment variable "$CURRENT_UPSTREAM_REPO_NAME" is required e.g. CURRENT_UPSTREAM_REPO_NAME=livingdocsIO/livingdocs-editor'
         return 1
     fi
 
@@ -32,7 +32,7 @@ function setup_commands () {
     fi
 
     if [ -z $CURRENT_UPSTREAM_PATH ]; then
-        >&2 echo 'The environment variable "$CURRENT_UPSTREAM_PATH" is required e.g. CURRENT_UPSTREAM_PATH=/home/rof/src/github.com/upfrontIO/livingdocs-editor'
+        >&2 echo 'The environment variable "$CURRENT_UPSTREAM_PATH" is required e.g. CURRENT_UPSTREAM_PATH=/home/rof/src/github.com/livingdocsIO/livingdocs-editor'
         return 1
     fi
 
@@ -46,7 +46,7 @@ function setup_commands () {
 
     # Read DEFAULT SETTINGS out of integration config
     # -----------------------------------------------
-    # e.g. upfrontIO/livingdocs-bluewin-editor
+    # e.g. livingdocsIO/livingdocs-bluewin-editor
     DEFAULT_REPO_NAME=`cat $INTEGRATION_CONFIG | jq --arg proj "$CURRENT_UPSTREAM_PROJECT" '.[$proj].default.downstream.repository' | tr -d '"'`
     >&2 echo ""
     >&2 echo "---------- DEBUG LOG --------------"
@@ -67,7 +67,7 @@ function setup_commands () {
 
     # Read CUSTOM SETTINGS out of integration config
     # -----------------------------------------------
-    # e.g. upfrontIO/livingdocs-bluewin-editor
+    # e.g. livingdocsIO/livingdocs-bluewin-editor
     CUSTOM_REPO_BASE=`cat $INTEGRATION_CONFIG | jq --arg upstream_base_branch_name "$CURRENT_UPSTREAM_BASE_BRANCH" --arg proj "$CURRENT_UPSTREAM_PROJECT" '.[$proj].custom[] | select(.["base-branch"]==$upstream_base_branch_name) | .downstream.repository' | tr -d '"'`
     CUSTOM_REPO=`cat $INTEGRATION_CONFIG | jq --arg upstream_base_branch_name "$CURRENT_UPSTREAM_BRANCH" --arg proj "$CURRENT_UPSTREAM_PROJECT" '.[$proj].custom[] | select(.["base-branch"]==$upstream_base_branch_name) | .downstream.repository' | tr -d '"'`
     CUSTOM_REPO_NAME=${CUSTOM_REPO:-$CUSTOM_REPO_BASE}
