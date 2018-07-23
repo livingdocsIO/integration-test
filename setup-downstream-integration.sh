@@ -84,7 +84,7 @@ function setup_commands () {
 
     # clone the right branch
     DOWNSTREAM_REPO_NAME=${CUSTOM_REPO_NAME:-$DEFAULT_REPO_NAME}
-    DOWNSTREAM_REPO_URL="git@github.com:$DOWNSTREAM_REPO_NAME.git"
+    DOWNSTREAM_REPO_URL="https://github.com/$DOWNSTREAM_REPO_NAME.git"
     mkdir -p $CURRENT_DOWNSTREAM_PATH
 
     if [ $CURRENT_UPSTREAM_BRANCH == "master" ] || [ $(echo $CURRENT_UPSTREAM_BRANCH | grep ^greenkeeper/) ]; then
