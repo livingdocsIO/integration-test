@@ -1,17 +1,23 @@
 {
   "name": "integration-test",
   "version": "1.0.0",
-  "description": "Integration test setup",
+  "description": "Here you can find scripts to support the setup for integration tests. We want to assure that our changes in the upstream has no negative effect for our customers. Therefore we run integration tests from specific upstream branches against specific downstream branches. Because this connection between upstream and downstream has to be flexible, we have introduced this repository and the possibility to configure connections between up- and downstreams with a config in the upstream repository e.g. livingdocs-editor.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
+  "author": "livingdocs",
+  "license": "MIT",
+  "dependencies": {
+    "@octokit/rest": "^15.9.4",
+    "execa": "^0.10.0",
+    "lodash": "^4.17.10"
+  },
+  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/livingdocsIO/integration-test.git"
   },
-  "author": "livingdocs",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/livingdocsIO/integration-test/issues"
   },
