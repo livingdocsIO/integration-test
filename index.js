@@ -13,7 +13,8 @@ const PULL_REQUEST_NR = process.env.DRONE_PULL_REQUEST
 const CURRENT_BRANCH = process.env.DRONE_COMMIT_BRANCH
 const DEPTH = Math.max(process.env.PLUGIN_DEPTH, 1) || 1
 const DOWNSTREAMS = (process.env.PLUGIN_DOWNSTREAMS || '').split(/(, )/).filter(Boolean)
-const INTEGRATION_FILE_PATH = 'livingdocs-integration.json'
+const INTEGRATION_FILE_PATH = process.env.PLUGIN_INTEGRATION_FILE_PATH || 'livingdocs-integration.json'
+const LOCAL_INTEGRATION_FILE = ['true', true].includes(process.env.PLUGIN_LOCAL_INTEGRATION_FILE)
 const CWD = process.env.PLUGIN_CWD || process.cwd()
 
 assert(token, 'The variable GH_TOKEN is required.')
@@ -31,6 +32,7 @@ fs.writeFileSync(`${process.env.HOME}/.netrc`, [
 ].join('\n'))
 
 async function getIntegrationFile () {
+  if (LOCAL_INTEGRATION_FILE) return normalizeLegacyIntegrationFile(require(path.join('./', INTEGRATION_FILE_PATH)))
   const resp = await octokit.repos.getContent({owner: OWNER, repo: REPO, ref: REPO_BASE, path: INTEGRATION_FILE_PATH})
   return normalizeLegacyIntegrationFile(JSON.parse(Buffer.from(resp.data.content, 'base64').toString()))
 }
