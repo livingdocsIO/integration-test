@@ -28,7 +28,7 @@ octokit.authenticate({type: 'oauth', token})
 fs.writeFileSync(`${process.env.HOME}/.netrc`, [
   `machine github.com`,
   `login ${username}`,
-  `password ${token}`,
+  `password ${token}`
 ].join('\n'))
 
 async function getIntegrationFile () {
@@ -38,10 +38,13 @@ async function getIntegrationFile () {
 }
 
 function normalizeLegacyIntegrationFile (json) {
-  if (json.repository) return json
   const normalized = {}
   for (const name in json) {
     const orig = json[name]
+    if (orig.repository) {
+      normalized[name] = orig
+      continue
+    }
     normalized[name] = {
       repository: orig.default.downstream['repository'],
       defaultBranch: orig.default.downstream['integration-branch'],
