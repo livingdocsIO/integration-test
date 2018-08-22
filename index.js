@@ -78,7 +78,7 @@ async function extractTargetBranches (integrationFile) {
       continue
     }
 
-    const customBranch = downstreamConfig.customBranches[prBaseBranch]
+    const customBranch = (downstreamConfig.customBranches || {})[prBaseBranch]
     if (customBranch && await hasBranch(downstreamConfig.repository, customBranch)) {
       downstream.branch = customBranch
       downstream.cause = 'custom'
