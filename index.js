@@ -13,7 +13,7 @@ const PULL_REQUEST_NR = process.env.DRONE_PULL_REQUEST
 const CURRENT_BRANCH = process.env.DRONE_COMMIT_BRANCH
 const DEPTH = Math.max(process.env.PLUGIN_DEPTH, 1) || 1
 const DOWNSTREAMS = (process.env.PLUGIN_DOWNSTREAMS || '').split(/(, )/).filter(Boolean)
-const INTEGRATION_FILE_PATH = process.env.PLUGIN_INTEGRATION_FILE_PATH || 'livingdocs-integration.json'
+const INTEGRATION_FILE_PATH = process.env.PLUGIN_INTEGRATION_FILE_PATH || 'livingdocs-integration.json' // eslint-disable-line max-len
 const LOCAL_INTEGRATION_FILE = ['true', true].includes(process.env.PLUGIN_LOCAL_INTEGRATION_FILE)
 const LOCAL_INTEGRATION_FILE_PATH = LOCAL_INTEGRATION_FILE && path.resolve(INTEGRATION_FILE_PATH)
 const CWD = process.env.PLUGIN_CWD || process.cwd()
@@ -33,9 +33,19 @@ fs.writeFileSync(`${process.env.HOME}/.netrc`, [
 ].join('\n'))
 
 async function getIntegrationFile () {
-  if (LOCAL_INTEGRATION_FILE_PATH) return normalizeLegacyIntegrationFile(require(LOCAL_INTEGRATION_FILE_PATH))
-  const resp = await octokit.repos.getContent({owner: OWNER, repo: REPO, ref: REPO_BASE, path: INTEGRATION_FILE_PATH})
-  return normalizeLegacyIntegrationFile(JSON.parse(Buffer.from(resp.data.content, 'base64').toString()))
+  if (LOCAL_INTEGRATION_FILE_PATH) {
+    return normalizeLegacyIntegrationFile(require(LOCAL_INTEGRATION_FILE_PATH))
+  }
+
+  const resp = await octokit.repos.getContent({
+    owner: OWNER,
+    repo: REPO,
+    ref: REPO_BASE,
+    path: INTEGRATION_FILE_PATH
+  })
+
+  const fileContent = Buffer.from(resp.data.content, 'base64').toString()
+  return normalizeLegacyIntegrationFile(JSON.parse(fileContent))
 }
 
 function normalizeLegacyIntegrationFile (json) {
@@ -49,7 +59,9 @@ function normalizeLegacyIntegrationFile (json) {
     normalized[name] = {
       repository: orig.default.downstream['repository'],
       defaultBranch: orig.default.downstream['integration-branch'],
-      customBranches: _.mapValues(_.keyBy(orig.custom, 'base-branch'), (c) => c.downstream['integration-branch'])
+      customBranches: _.mapValues(_.keyBy(orig.custom, 'base-branch'), (c) => {
+        return c.downstream['integration-branch']
+      })
     }
   }
   return normalized
@@ -70,7 +82,8 @@ async function extractTargetBranches (integrationFile) {
     downstreams[name] = downstream
 
     if (CURRENT_BRANCH === REPO_BASE || isGreenkeeper) {
-      const {branch, cause} = await fallbackDefault(isGreenkeeper ? 'greenkeeper' : 'base', downstreamConfig)
+      const defaultBranch = isGreenkeeper ? 'greenkeeper' : 'base'
+      const {branch, cause} = await fallbackDefault(defaultBranch, downstreamConfig)
       downstream.branch = branch
       downstream.cause = cause
       continue
@@ -114,9 +127,10 @@ async function hasBranch (repository, branch) {
 }
 
 async function fallbackDefault (cause, downstreamConfig) {
+  const hasDefault = await hasBranch(downstreamConfig.repository, downstreamConfig.defaultBranch)
   return {
     repo: downstreamConfig.repository,
-    branch: await hasBranch(downstreamConfig.repository, downstreamConfig.defaultBranch) ? downstreamConfig.defaultBranch : 'master',
+    branch: hasDefault ? downstreamConfig.defaultBranch : 'master',
     cause
   }
 }
@@ -126,7 +140,13 @@ async function cloneAll (targets) {
     const dir = path.join(CWD, target.name)
     await execa('rm', ['-Rf', `${dir}`])
     await execa('mkdir', ['-p', `${dir}`])
-    await execa(`git`, [`clone`, `--branch`, target.branch, `--depth`, DEPTH, `https://github.com/${target.repo}.git`, `${dir}`])
+    await execa(`git`, [
+      `clone`,
+      `--branch`, target.branch,
+      `--depth`, DEPTH,
+      `https://github.com/${target.repo}.git`,
+      `${dir}`
+    ])
   }))
   return targets
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const integration = require('./index')
 integration.execute()
   .then((msg) => {
