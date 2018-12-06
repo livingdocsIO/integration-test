@@ -21,5 +21,14 @@
   "bugs": {
     "url": "https://github.com/livingdocsIO/integration-test/issues"
   },
-  "homepage": "https://github.com/livingdocsIO/integration-test#readme"
+  "homepage": "https://github.com/livingdocsIO/integration-test#readme",
+  "release": {
+    "npmPublish": false,
+    "verifyConditions": [
+      "@semantic-release/github"
+    ],
+    "publish": [
+      "@semantic-release/github"
+    ]
+  }
 }
