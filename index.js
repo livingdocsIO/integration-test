@@ -136,4 +136,4 @@ async function execute () {
   return cloneAll(targets)
 }
 
-module.exports = execute
+module.exports = {execute, getIntegrationFile}

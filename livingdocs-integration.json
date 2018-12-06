@@ -1,0 +1,30 @@
+{
+  "bluewin": {
+    "repository": "livingdocsIO/livingdocs-bluewin-server",
+    "defaultBranch": "upstream-release-2018-08",
+    "customBranches": {
+      "release-2018-06": "upstream-release-2018-06",
+      "release-2018-05": "upstream-release-2018-05",
+      "release-2018-04": "upstream-release-2018-04",
+      "release-2018-03": "upstream-release-2018-03",
+      "release-2018-02": "upstream-release-2018-02",
+      "release-2018-01": "master",
+      "release-2017-12": "master",
+      "release-2017-10": "master"
+    }
+  },
+  "nzz": {
+    "repository": "nzzdev/livingdocs-api",
+    "defaultBranch": "upstream-release-2018-08",
+    "customBranches": {
+      "release-2018-06": "upstream-release-2018-06",
+      "release-2018-05": "upstream-release-2018-05",
+      "release-2018-04": "upstream-release-2018-04",
+      "release-2018-03": "upstream-release-2018-03",
+      "release-2018-02": "upstream-release-2018-02",
+      "release-2018-01": "master",
+      "release-2017-12": "upstream-release-2017-12",
+      "release-2017-10": "master"
+    }
+  }
+}

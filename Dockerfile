@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:10-alpine
 RUN apk add git openssh --no-cache
 ADD . /script
 WORKDIR /script
