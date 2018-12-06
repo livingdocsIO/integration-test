@@ -13,9 +13,9 @@ const PULL_REQUEST_NR = process.env.DRONE_PULL_REQUEST
 const CURRENT_BRANCH = process.env.DRONE_COMMIT_BRANCH
 const DEPTH = Math.max(process.env.PLUGIN_DEPTH, 1) || 1
 const DOWNSTREAMS = (process.env.PLUGIN_DOWNSTREAMS || '').split(/(, )/).filter(Boolean)
-const INTEGRATION_FILE_PATH = process.env.PLUGIN_INTEGRATION_FILE_PATH || 'livingdocs-integration.json' // eslint-disable-line max-len
-const LOCAL_INTEGRATION_FILE = ['true', true].includes(process.env.PLUGIN_LOCAL_INTEGRATION_FILE)
-const LOCAL_INTEGRATION_FILE_PATH = LOCAL_INTEGRATION_FILE && path.resolve(INTEGRATION_FILE_PATH)
+const INTEGRATION_FILE = process.env.PLUGIN_FILE || 'livingdocs-integration.json' // eslint-disable-line max-len
+const REMOTE_FILE = ['true', true].includes(process.env.PLUGIN_REMOTE)
+const LOCAL_INTEGRATION_FILE_PATH = !REMOTE_FILE && path.resolve(INTEGRATION_FILE)
 const CWD = process.env.PLUGIN_CWD || process.cwd()
 
 assert(token, 'The variable GH_TOKEN is required.')
@@ -41,7 +41,7 @@ async function getIntegrationFile () {
       owner: OWNER,
       repo: REPO,
       ref: REPO_BASE,
-      path: INTEGRATION_FILE_PATH
+      path: INTEGRATION_FILE
     })
 
     fileContent = Buffer.from(resp.data.content, 'base64').toString()

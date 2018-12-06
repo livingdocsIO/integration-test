@@ -1,7 +1,7 @@
 {
   "name": "integration-test",
   "version": "1.1.0",
-  "description": "Here you can find scripts to support the setup for integration tests. We want to assure that our changes in the upstream has no negative effect for our customers. Therefore we run integration tests from specific upstream branches against specific downstream branches. Because this connection between upstream and downstream has to be flexible, we have introduced this repository and the possibility to configure connections between up- and downstreams with a config in the upstream repository e.g. livingdocs-editor.",
+  "description": "A drone plugin to clone downstream branches",
   "main": "index.js",
   "scripts": {
     "test": "node test.js"
