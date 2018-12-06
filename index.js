@@ -33,18 +33,20 @@ fs.writeFileSync(`${process.env.HOME}/.netrc`, [
 ].join('\n'))
 
 async function getIntegrationFile () {
+  let fileContent
   if (LOCAL_INTEGRATION_FILE_PATH) {
-    return normalizeLegacyIntegrationFile(require(LOCAL_INTEGRATION_FILE_PATH))
+    fileContent = fs.readFileSync(LOCAL_INTEGRATION_FILE_PATH, 'utf8')
+  } else {
+    const resp = await octokit.repos.getContent({
+      owner: OWNER,
+      repo: REPO,
+      ref: REPO_BASE,
+      path: INTEGRATION_FILE_PATH
+    })
+
+    fileContent = Buffer.from(resp.data.content, 'base64').toString()
   }
 
-  const resp = await octokit.repos.getContent({
-    owner: OWNER,
-    repo: REPO,
-    ref: REPO_BASE,
-    path: INTEGRATION_FILE_PATH
-  })
-
-  const fileContent = Buffer.from(resp.data.content, 'base64').toString()
   return normalizeLegacyIntegrationFile(JSON.parse(fileContent))
 }
 
