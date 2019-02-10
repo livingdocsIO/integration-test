@@ -23,12 +23,6 @@
   },
   "homepage": "https://github.com/livingdocsIO/integration-test#readme",
   "release": {
-    "npmPublish": false,
-    "verifyConditions": [
-      "@semantic-release/github"
-    ],
-    "publish": [
-      "@semantic-release/github"
-    ]
+    "extends": "@livingdocs/semantic-release-presets/github"
   }
 }

@@ -5,7 +5,7 @@ const _ = require('lodash')
 const execa = require('execa')
 
 const username = 'x-oauth-basic'
-const token = process.env.GH_TOKEN
+const token = process.env.PLUGIN_TOKEN || process.env.GH_TOKEN
 const OWNER = process.env.DRONE_REPO_OWNER
 const REPO = process.env.DRONE_REPO_NAME
 const REPO_BASE = process.env.DRONE_REPO_BRANCH || 'master'
