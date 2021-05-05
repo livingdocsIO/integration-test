@@ -12,7 +12,7 @@ Create a new droneci build and add those lines to the '.drone.yml' config to def
 ```yaml
 pipeline:
   clone-downstreams:
-    image: livingdocs/integration-test:2.0.0
+    image: livingdocs/integration-test:3.0.1
     cwd: /drone/src
     secrets: [gh_token]
 ```
@@ -69,3 +69,32 @@ Integration Test: Downstream `upstream-release-2018-11` --> Upstream `my-feature
 * Upstream Base Branch Name: `master`
 
 Integration Test: Downstream `upstream-release-2018-11` --> Upstream `my-feature`
+
+# Local Development
+
+If you want to make local tests (e.g. for `my-test-branch` on `livingdocs-server`) you can run the script on your machine too:
+
+```bash
+GH_TOKEN=<your-gh-token> DRONE_REPO_OWNER=livingdocsIO DRONE_REPO_NAME=livingdocs-server DRONE_COMMIT_BRANCH=my-test-branch ./bin.js
+```
+
+If everything works fine
+- it clones a nzz/bluewin folder in your current directory
+- you get an output like below
+
+```js
+{
+  bluewin: {
+    name: 'bluewin',
+    repo: 'livingdocsIO/livingdocs-bluewin-server',
+    branch: 'master',
+    cause: 'default'
+  },
+  nzz: {
+    name: 'nzz',
+    repo: 'nzzdev/livingdocs-api',
+    branch: 'master',
+    cause: 'default'
+  }
+}
+```

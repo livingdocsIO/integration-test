@@ -1,8 +1,9 @@
-/* eslint-disable no-console */
+#!/usr/bin/env node
+
 const integration = require('./index')
 integration.execute()
   .then((msg) => {
-    console.log(JSON.parse(msg, null, 2))
+    console.log(msg)
   })
   .catch((err) => {
     console.error(err)
