@@ -23,8 +23,10 @@ assert(OWNER, 'The variable DRONE_REPO_OWNER is required.')
 assert(REPO, 'The variable DRONE_REPO_NAME is required.')
 assert(CURRENT_BRANCH, 'The variable DRONE_COMMIT_BRANCH is required.')
 
-const octokit = require('@octokit/rest')()
-octokit.authenticate({type: 'oauth', token})
+const {Octokit} = require('@octokit/rest')
+const octokit = new Octokit({
+  auth: token
+})
 
 fs.writeFileSync(`${process.env.HOME}/.netrc`, [
   `machine github.com`,
@@ -37,7 +39,7 @@ async function getIntegrationFile () {
   if (LOCAL_INTEGRATION_FILE_PATH) {
     fileContent = fs.readFileSync(LOCAL_INTEGRATION_FILE_PATH, 'utf8')
   } else {
-    const resp = await octokit.repos.getContent({
+    const resp = await octokit.rest.repos.getContent({
       owner: OWNER,
       repo: REPO,
       ref: REPO_BASE,
@@ -112,7 +114,9 @@ async function extractTargetBranches (integrationFile) {
 }
 
 async function getPRBase () {
-  const resp = await octokit.pullRequests.get({owner: OWNER, repo: REPO, number: PULL_REQUEST_NR})
+  const resp = await octokit.rest.pulls.get({
+    owner: OWNER, repo: REPO, pull_number: PULL_REQUEST_NR
+  })
   return resp.data.base.ref
 }
 
@@ -120,10 +124,10 @@ async function hasBranch (repository, branch) {
   if (!branch) return false
 
   const [owner, repo] = repository.split('/')
-  return octokit.repos.getBranch({owner, repo, branch})
+  return octokit.rest.repos.getBranch({owner, repo, branch})
     .then((result) => true)
     .catch((result) => {
-      if (result.code === 404) return false
+      if (result.status === 404) return false
       throw result
     })
 }

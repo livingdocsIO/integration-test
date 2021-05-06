@@ -9,9 +9,9 @@
   "author": "livingdocs",
   "license": "MIT",
   "dependencies": {
-    "@octokit/rest": "^15.9.4",
-    "execa": "^0.10.0",
-    "lodash": "^4.17.19"
+    "@octokit/rest": "^18.5.3",
+    "execa": "^5.0.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {},
   "repository": {
