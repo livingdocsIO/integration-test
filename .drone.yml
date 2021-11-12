@@ -21,7 +21,7 @@ steps:
   commands: ["npm run test -s"]
 
 - name: release
-  image: livingdocs/semantic-release:v1.0.0
+  image: livingdocs/semantic-release:v1.2.2
   environment:
     GH_TOKEN:
       from_secret: GH_TOKEN
@@ -30,6 +30,6 @@ trigger:
   event: [push]
 ---
 kind: signature
-hmac: 949c91e179f54e8c1b67153d2e4401cbf91cd968be3fb660d452786c058b0818
+hmac: 688ac1785ebb162b52ef9142fb501e343c6b4fe7d5d16f21d147d3949a06a72d
 
 ...
