@@ -124,12 +124,13 @@ async function hasBranch (repository, branch) {
   if (!branch) return false
 
   const [owner, repo] = repository.split('/')
-  return octokit.rest.repos.getBranch({owner, repo, branch})
-    .then((result) => true)
-    .catch((result) => {
-      if (result.status === 404) return false
-      throw result
-    })
+  try {
+    await octokit.rest.repos.getBranch({owner, repo, branch})
+    return true
+  } catch (err) {
+    if ([404, '404'].includes(err.status)) return false
+    throw err
+  }
 }
 
 async function fallbackDefault (cause, downstreamConfig) {
